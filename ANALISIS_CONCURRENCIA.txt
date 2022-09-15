@@ -1,0 +1,26 @@
+Analisis
+
+  ¿Qué condiciones de carrera se podrían presentar?
+    Una condición de carrera que se podría presentar es cuando se desea actualizar un mismo plano por dos o más 
+    usuarios al mismo tiempo.
+
+  ¿Cuales son las respectivas regiones críticas?
+    La región crítica se presentaria en el metodo manejadorPutBlueprint, que maneja la petición de PUT de 
+    BlueprintAPIController.
+
+Solución
+
+  En la declaración del metodo lo decloramos como "synchronized", queda de la siguiente manera:
+
+    RequestMapping(value="/{author}/{name}",method = RequestMethod.PUT)
+    @ResponseBody
+    public synchronized ResponseEntity<?> manejadorPutBlueprint(@PathVariable("author") String author,@PathVariable("name") String name,@RequestBody Blueprint bp ) {
+        try {
+            services.updateBlueprint(bp,author,name);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (Exception ex) {
+            Logger.getLogger(BlueprintAPIController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        }
+    }
+
